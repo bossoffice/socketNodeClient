@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <base href="http://127.0.0.1:3000/"> -->
+    <title>Socket</title>
+</head>
+
+<body>
+    <h1>Scoket Chat</h1>
+    <textarea id="textArea" minlength="300px" height="300px"></textarea>
+    <button onclick="onClickPush()">push message</button>
+</body>
+
+
+<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+<script>
+
+
+
+    // var socket = io('http://localhost:3000');
+    var socket = io.connect('http://localhost:3000');
+
+    socket.on('connect', function () {
+        console.log('Client has connected to the server!');
+    });
+
+    socket.on('chat', function (msg) {
+        console.log(`receive msg: ${msg}`);
+    });
+
+
+    async function onClickPush() {
+        var requestOptions = {
+            method: 'GET',
+            // redirect: 'follow'
+        };
+        try {
+            let message = document.querySelector("#textArea").value
+            message = message === "" && message === undefined ? "" : message
+            let response = await fetch("http://localhost:3000/", requestOptions)
+            socket.emit("chat", message)
+            let result = await response.json()
+            console.log(result)
+
+        } catch (e) {
+            console.error(e)
+        }
+
+    }
+
+</script>
+
+</html>
